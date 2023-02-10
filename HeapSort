@@ -1,3 +1,9 @@
+/*
+ Time: build max heap + n times heapify op.. => O(n) + n log n => O(n log n)
+ Space: in-place => constant 
+
+*/
+
 public class HeapSort {
 
     public static void main(String[] args) {
