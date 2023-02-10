@@ -1,0 +1,70 @@
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+
+public class MergeKSortedLists {
+
+    public static void main(String[] args) {
+        MergeKSortedLists run = new MergeKSortedLists();
+        ListNode l11 = new ListNode(1);
+        ListNode l12 = new ListNode(4);
+        l11.next = l12;
+        ListNode l13 = new ListNode(5);
+        l12.next = l13;
+
+        ListNode l21 = new ListNode(1);
+        ListNode l22 = new ListNode(3);
+        l21.next = l22;
+        ListNode l23 = new ListNode(4);
+        l22.next = l23;
+
+        ListNode l31 = new ListNode(2);
+        ListNode l32 = new ListNode(6);
+        l31.next = l32;
+
+        ListNode lists[] = new ListNode[3];
+        lists[0] = l11;
+        lists[1] = l21;
+        lists[2] = l31;
+
+        print(run.mergeKLists(lists));
+    }
+
+    /*
+        By using priority queue
+        Time: nlogn -> for every pq.add or pq.poll it takes logn time.. and this is done for all nodes
+        Space: O(1)
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode ans = new ListNode();
+        ListNode currHead = ans;
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(Comparator.comparing(a -> a.val));
+
+        for (ListNode l : lists) {
+            if (l != null) {
+                pq.add(l);
+            }
+        }
+
+        while(!pq.isEmpty()){
+            ListNode min = pq.poll();
+            currHead.next = min;
+            currHead = currHead.next;
+            min = min.next;
+            if (min != null){
+                pq.add(min);
+            }
+        }
+
+        return ans.next;
+    }
+
+    private static void print(ListNode list){
+        while(list != null){
+            System.out.print(list.val + ",");
+            list = list.next;
+        }
+        System.out.println();
+    }
+
+}
