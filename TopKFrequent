@@ -1,0 +1,67 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+/*
+    Time: O(nlogn)
+    Space: O(n)
+    */
+
+
+public class TopKFrequent {
+    public static void main(String[] args) {
+        TopKFrequent t1 = new TopKFrequent();
+        int arr[] ={3,0,1,0};
+        int ans[] = t1.topKFrequent(arr,1);
+        for(int n:ans){
+            System.out.print(n);
+        }
+    }
+
+    class NumAndFreq{
+        int num;
+        int freq;
+
+        NumAndFreq(int num, int freq){
+            this.num = num;
+            this.freq = freq;
+        }
+    }
+
+    public int[] topKFrequent(int[] nums, int k) {
+        PriorityQueue<NumAndFreq> pq = new PriorityQueue<>((a,b)->{
+            if(a.freq == b.freq){
+                return 0;
+            } else if (a.freq>b.freq){
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
+        Map<Integer,NumAndFreq> noVsFreq = new HashMap<>();
+
+        for (int num: nums){
+            NumAndFreq n = null;
+            if(noVsFreq.get(num) == null){
+                n = new NumAndFreq(num,1);
+                noVsFreq.put(num,n);
+            } else {
+                n = noVsFreq.get(num);
+                n.freq+=1;
+            }
+        }
+
+        pq.addAll(noVsFreq.values());
+
+        int ans[] = new int[k];
+
+        int i=0;
+        while(i<k){
+            ans[i++] = pq.poll().num;
+        }
+
+        return ans;
+
+    }
+}
