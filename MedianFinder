@@ -1,0 +1,75 @@
+import java.util.PriorityQueue;
+
+/*
+    Time: add : O(nlogn) find: O(1)
+    Space: O(n)
+    */
+    
+public class MedianFinder {
+
+    public static void main(String[] args) {
+        MedianFinder medianFinder = new MedianFinder();
+        medianFinder.addNum(1);    // arr = [1]
+        medianFinder.addNum(2);    // arr = [1, 2]
+        System.out.println(medianFinder.findMedian()); // return 1.5 (i.e., (1 + 2) / 2)
+        medianFinder.addNum(3);    // arr[1, 2, 3]
+        System.out.println(medianFinder.findMedian()); // return 2.0
+    }
+
+    private PriorityQueue<Integer> smallHeap = new PriorityQueue<>((a,b) -> b.compareTo(a));
+    private PriorityQueue<Integer> largeHeap = new PriorityQueue<>((a,b) -> a.compareTo(b));
+
+    public MedianFinder() {
+
+    }
+
+    public void addNum(int num) {
+        smallHeap.add(num);
+        satisfy();
+    }
+
+    private void satisfy(){
+
+        while(true){
+            boolean touch = false;
+
+            if(smallHeap.size() > largeHeap.size() && smallHeap.size() - largeHeap.size() > 1) {
+                largeHeap.add(smallHeap.poll());
+                touch = true;
+            }
+
+            if(largeHeap.size() > smallHeap.size() && largeHeap.size() - smallHeap.size() > 1) {
+                smallHeap.add(largeHeap.poll());
+                touch = true;
+            }
+
+            if(smallHeap.size() > 0 && largeHeap.size() > 0 && smallHeap.peek() > largeHeap.peek()){
+                largeHeap.add(smallHeap.poll());
+                touch = true;
+            }
+
+            if(smallHeap.size() > 0 && largeHeap.size() > 0 &&  largeHeap.peek() < smallHeap.peek()){
+                smallHeap.add(largeHeap.poll());
+                touch = true;
+            }    
+            
+            if (!touch){
+                break;
+            }
+        }
+        
+    }
+
+    public double findMedian() {
+        if(smallHeap.size() > largeHeap.size()){
+            return smallHeap.peek();
+        }
+
+        if(largeHeap.size() > smallHeap.size()){
+            return largeHeap.peek();
+        }
+
+        Double res = (Double.valueOf(smallHeap.peek()) + Double.valueOf(largeHeap.peek())) /2;
+        return res;
+    }
+}
