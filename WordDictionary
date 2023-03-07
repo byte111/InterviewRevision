@@ -1,0 +1,84 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
+/*
+211. Design Add and Search Words Data Structure
+https://leetcode.com/problems/design-add-and-search-words-data-structure/description/
+Time: n ^ n
+Space: n
+*/
+class WordDictionary {
+
+    public static void main(String[] args) {
+        WordDictionary wordDictionary = new WordDictionary();
+        wordDictionary.addWord("bad");
+        wordDictionary.addWord("dad");
+        wordDictionary.addWord("mad");
+        System.out.println(wordDictionary.search("pad")); // return False
+        System.out.println(wordDictionary.search("bad")); // return True
+        System.out.println(wordDictionary.search(".ad"));
+        ; // return True);
+        System.out.println(wordDictionary.search("b.."));
+        ; // return True
+    }
+
+    WordDictionary child[];
+    boolean isEnd;
+
+    public WordDictionary() {
+        child = new WordDictionary[26];
+    }
+
+
+    public WordDictionary get(char ch){
+        return child[ch-'a'];
+    }
+
+    public boolean containsKey(char ch){
+        return child[ch-'a'] != null;
+    }
+
+    public void put(char ch){
+        child[ch-'a'] = new WordDictionary();
+    }
+
+    public void addWord(String word) {
+        WordDictionary node = this;
+        for(char ch: word.toCharArray()){
+            if(!node.containsKey(ch)){
+                node.put(ch);
+            }
+            node = node.get(ch);
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        WordDictionary node = this;
+        for(int i=0;i< word.toCharArray().length; i++){
+            if (word.charAt(i) == '.'){
+                for(WordDictionary currChild: node.child){
+                    if(currChild != null && currChild.search(word.substring(i+1))){
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            if(!node.containsKey(word.charAt(i))){
+                node = null;
+                break;
+            }
+
+            node = node.get(word.charAt(i));
+        }
+
+        return node != null && node.isEnd;
+    }
+}
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */
