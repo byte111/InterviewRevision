@@ -1,0 +1,52 @@
+
+/*
+Time: O(n*n*4^n)
+Space: O(n)
+79. Word Search https://leetcode.com/problems/word-search/description/
+*/
+class Solution {
+    public boolean exist(char[][] board, String word) {
+        int rows = board.length;
+        int cols = board[0].length;
+        boolean visited[][] = new boolean[rows][cols];
+
+        for(int i=0;i<rows;i++){
+            for(int j =0; j<cols; j++){
+                if(dfs(board, visited, word, 
+                        i , j , rows, cols, 0)){
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    boolean dfs(char board[][], boolean visited[][], String word, 
+             int currRow, int currCol, 
+             int maxRow, int maxCol, int currCharPos) {
+
+        if(currCharPos == word.length()){
+            return true;
+        }
+
+        if(currRow == maxRow || currRow < 0 ||
+           currCol == maxCol || currCol < 0 || 
+            visited[currRow][currCol] == true || 
+            word.charAt(currCharPos) != board[currRow][currCol]){
+                return false;
+            }
+
+         visited[currRow][currCol] = true;   
+
+        boolean res = dfs(board, visited, word, currRow, currCol+1, maxRow, maxCol, currCharPos+1) ||
+         dfs(board, visited, word, currRow+1, currCol, maxRow, maxCol, currCharPos+1) ||
+         dfs(board, visited, word, currRow, currCol-1, maxRow, maxCol, currCharPos+1) || 
+         dfs(board, visited, word, currRow-1, currCol, maxRow, maxCol, currCharPos+1);
+
+        visited[currRow][currCol] = false;   
+
+        return res;
+
+    }
+}
