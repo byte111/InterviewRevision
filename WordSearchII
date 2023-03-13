@@ -1,0 +1,117 @@
+/*
+Time: O(n2) + O(n2*4^n2)
+Space: O(n)
+
+212. Word Search II
+https://leetcode.com/problems/word-search-ii/description/
+*/
+
+class Solution {
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> ans = new ArrayList<>();
+        int maxR = board.length;
+        int maxC = board[0].length;
+        boolean visited[][] = new boolean[maxR][maxC];
+        Set<String> matches = new HashSet<>();
+        TrieNode root = getRootNode(words);
+        for (int i = 0; i < maxR; i++) {
+            for (int j = 0; j < maxC; j++) {
+                dfs(i, j, maxR, maxC, board, visited, root, "", matches);
+            }
+        }
+
+        ans.addAll(matches);
+        return ans;
+    }
+
+    void dfs(int r, int c, int maxR, int maxC, char board[][], boolean visited[][],
+             TrieNode node, String word,
+             Set<String> words) {
+        if (r == maxR || r < 0 || c == maxC || c < 0 ||
+                !node.containsKey(board[r][c]) || visited[r][c]) {
+            return;
+        }
+
+        word += board[r][c];
+        node = node.get(board[r][c]);
+        visited[r][c] = true;
+
+        if (node.getIsEnd()) {
+            words.add(word);
+        }
+
+        dfs(r, c + 1, maxR, maxC, board, visited, node, word, words);
+        dfs(r + 1, c, maxR, maxC, board, visited, node, word, words);
+        dfs(r, c - 1, maxR, maxC, board, visited, node, word, words);
+        dfs(r - 1, c, maxR, maxC, board, visited, node, word, words);
+
+        visited[r][c] = false;
+    }
+
+    TrieNode getRootNode(String[] words) {
+        TrieNode root = new TrieNode();
+        for (String w : words) {
+            root.addWord(w);
+        }
+
+        return root;
+    }
+
+    class TrieNode {
+        TrieNode children[];
+        boolean isEnd;
+
+        public TrieNode() {
+            this.children = new TrieNode[26];
+            this.isEnd = false;
+        }
+
+        boolean containsKey(char ch) {
+            return this.children[ch - 'a'] != null;
+        }
+
+        boolean getIsEnd() {
+            return this.isEnd;
+        }
+
+        void setIsEnd() {
+            this.isEnd = true;
+        }
+
+        void put(char ch) {
+            this.children[ch - 'a'] = new TrieNode();
+        }
+
+        TrieNode get(char ch) {
+            return this.children[ch - 'a'];
+        }
+
+        void addWord(String word) {
+            TrieNode node = this;
+
+            for (char ch : word.toCharArray()) {
+                if (!node.containsKey(ch)) {
+                    node.put(ch);
+                }
+                node = node.get(ch);
+            }
+
+            node.setIsEnd();
+        }
+
+        void print(TrieNode root, String word) {
+            if (root == null) {
+                return;
+            }
+
+            if (root.getIsEnd()) {
+                System.out.println(word);
+                return;
+            }
+
+            for (int i = 0; i < root.children.length; i++) {
+                print(root.children[i], word + ((char)(i+'a')));
+            }
+        }
+    }
+}
