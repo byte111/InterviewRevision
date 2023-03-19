@@ -1,0 +1,35 @@
+
+/*
+Time: O(n) -> Every cell is visited atmost once
+Space: O(n) -> size of call stack and visited array 
+Flood Fill
+https://leetcode.com/problems/flood-fill/submissions/917953880/
+*/
+
+class Solution {
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+        int maxR = image.length;
+        int maxC = image[0].length;
+        boolean visited[][] = new boolean[maxR][maxC];
+        int currColor = image[sr][sc];
+        dfs(image, sr, sc, maxR, maxC, visited, color, currColor);
+        return image;
+    }
+
+    private void dfs(int image[][], int currR, int currC, int maxR, int maxC,
+                     boolean visited[][], int color, int currColor) {
+
+        if(currR == maxR || currC == maxC || currR < 0 || currC < 0 ||
+            image[currR][currC] != currColor || visited[currR][currC]) {
+                return;
+        }
+
+         image[currR][currC] = color;
+         visited[currR][currC] = true;
+
+         dfs(image, currR, currC+1, maxR, maxC, visited, color, currColor);
+         dfs(image, currR+1, currC, maxR, maxC, visited, color, currColor);
+         dfs(image, currR, currC-1, maxR, maxC, visited, color, currColor);
+         dfs(image, currR-1, currC, maxR, maxC, visited, color, currColor);
+    }
+}
