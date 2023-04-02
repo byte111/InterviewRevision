@@ -1,0 +1,55 @@
+class Solution {
+    /*
+    Time: O(v+e)
+    Space: O(v+e)
+    https://leetcode.com/problems/course-schedule/description/
+    207. Course Schedule
+    */
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+
+        Map<Integer,List<Integer>> depMap = getDepMap(prerequisites);
+        Set<Integer> visited = new HashSet<>();
+
+        for(int course = 1; course <= numCourses; course++){
+            if(!dfs(depMap, visited, course)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    Map<Integer,List<Integer>> getDepMap(int prerequisites[][]){
+        Map<Integer,List<Integer>> map = new HashMap<>();
+
+        for(int i=0;i<prerequisites.length;i++){
+            map.computeIfAbsent(prerequisites[i][0], it -> new ArrayList<>())
+                            .add(prerequisites[i][1]);        
+        }
+
+        return map;
+    }
+
+    boolean dfs(Map<Integer,List<Integer>> map, Set<Integer> visited, int course){
+        if(visited.contains(course)){
+            return false;
+        }
+
+        if(map.get(course) == null){
+            return true;
+        }
+
+        visited.add(course);
+
+        for(Integer pre: map.get(course)){
+
+            if(!dfs(map, visited, pre)){
+                return false;
+            }
+        }
+
+        visited.remove(course);
+        map.put(course, null);
+        return true;
+    }
+}
