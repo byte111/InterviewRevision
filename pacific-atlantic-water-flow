@@ -1,0 +1,46 @@
+class Solution {
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        List<List<Integer>> ans = new ArrayList<>();
+        int maxR = heights.length;
+        int maxC = heights[0].length;
+        for(int i=0;i<maxR;i++) {
+            for(int j=0;j<maxC;j++){
+                if (canFlowAtlantic(i,j, maxR, maxC, heights[i][j], heights, new int[maxR][maxC])
+                        && canFlowPacific(i,j, maxR, maxC, heights[i][j], heights, new int[maxR][maxC])){
+                    ans.add(Arrays.asList(i,j));
+                }
+            }
+        }
+        return ans;
+    }
+
+    public boolean canFlowAtlantic(int currR,int currC, int maxR, int maxC, int prevHeight, int heights[][], int visited[][]) {
+        //System.out.println("currR="+currR+",currC="+currC);
+        if (currR == maxR || currC == maxC) {
+            return true;
+        }
+        if (currR == -1 || currC == -1 || heights[currR][currC] > prevHeight || visited[currR][currC] == 1) {
+            return false;
+        }
+        visited[currR][currC] = 1;
+        return canFlowAtlantic(currR, currC+1, maxR, maxC, heights[currR][currC], heights, visited) ||
+        canFlowAtlantic(currR+1, currC, maxR, maxC, heights[currR][currC], heights, visited) ||
+        canFlowAtlantic(currR, currC-1, maxR, maxC, heights[currR][currC], heights, visited) ||
+        canFlowAtlantic(currR-1, currC, maxR, maxC, heights[currR][currC], heights, visited);
+    }
+
+    public boolean canFlowPacific(int currR,int currC, int maxR, int maxC, int prevHeight, int heights[][], int visited[][]) {
+       // System.out.println("currR="+currR+",currC="+currC);
+        if (currR == -1 || currC == -1) {
+            return true;
+        }
+        if (currR == maxR || currC == maxC || heights[currR][currC] > prevHeight || visited[currR][currC] == 1) {
+            return false;
+        }
+        visited[currR][currC] = 1;
+        return canFlowPacific(currR, currC+1, maxR, maxC, heights[currR][currC], heights, visited) ||
+                canFlowPacific(currR+1, currC, maxR, maxC, heights[currR][currC], heights, visited) ||
+                canFlowPacific(currR, currC-1, maxR, maxC, heights[currR][currC], heights, visited) ||
+                canFlowPacific(currR-1, currC, maxR, maxC, heights[currR][currC], heights, visited);
+    }
+}
